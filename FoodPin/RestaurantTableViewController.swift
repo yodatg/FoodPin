@@ -24,6 +24,10 @@ class RestaurantTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Set Large Title
+        
+        navigationController?.navigationBar.prefersLargeTitles = true
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -67,67 +71,69 @@ class RestaurantTableViewController: UITableViewController {
         return cell
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // Create an option menu
-        
-        let optionMenu = UIAlertController(title: nil, message: "What do you want to do?", preferredStyle: .actionSheet)
-        if let popoverController = optionMenu.popoverPresentationController {
-            
-            if let cell = tableView.cellForRow(at: indexPath) {
-                popoverController.sourceView = cell
-                popoverController.sourceRect = cell.bounds
-            }
-            
-        }
-        
-        let callActionHandler = { (action:UIAlertAction!) -> Void in
-            
-            let alertMessage = UIAlertController(title: "Service Unavailable", message: "Sorry the call feature is not available yet.", preferredStyle: .alert)
-            self.present(alertMessage, animated: true, completion: nil)
-        }
-        
-        // Add actions to the menu
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        let callAction = UIAlertAction(title: "Call 123-000-\(indexPath.row)", style: .default, handler: callActionHandler)
-       
-        let checkinAction = UIAlertAction(title: "Check In", style: .default, handler: {(action: UIAlertAction!) -> Void in
-            
-            let cell = tableView.cellForRow(at: indexPath)
-            self.restaurantIsVisited[indexPath.row] = true
-            cell?.accessoryView = UIImageView(image: UIImage(named: "heart-tick"))
-            
-            
-        })
-        
-        let cancelCheckinAction = UIAlertAction(title: "Cancel Check In", style: .default, handler: {(action: UIAlertAction!) -> Void in
-            
-            let cell = tableView.cellForRow(at: indexPath)
-            self.restaurantIsVisited[indexPath.row] = false
-            cell?.accessoryView = .none
-            
-            
-            
-            
-        })
-        
-        optionMenu.addAction(cancelAction)
-        optionMenu.addAction(callAction)
-        
-        // check if restaurant is visited and change UI accordingly
-        
-        if restaurantIsVisited[indexPath.row] {
-            optionMenu.addAction(cancelCheckinAction)
-        }
-        else {
-            optionMenu.addAction(checkinAction)
-        }
-        
-        // Display the menu
-        present(optionMenu, animated: true, completion: nil)
-        
-        tableView.deselectRow(at: indexPath, animated: false)
-        
-    }
+//    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        // Create an option menu
+//        
+//        let optionMenu = UIAlertController(title: nil, message: "What do you want to do?", preferredStyle: .actionSheet)
+//        if let popoverController = optionMenu.popoverPresentationController {
+//            
+//            if let cell = tableView.cellForRow(at: indexPath) {
+//                popoverController.sourceView = cell
+//                popoverController.sourceRect = cell.bounds
+//            }
+//            
+//        }
+//        
+//        let callActionHandler = { (action:UIAlertAction!) -> Void in
+//            
+//            let alertMessage = UIAlertController(title: "Service Unavailable", message: "Sorry the call feature is not available yet.", preferredStyle: .alert)
+//            self.present(alertMessage, animated: true, completion: nil)
+//        }
+//        
+//        // Add actions to the menu
+//        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+//        let callAction = UIAlertAction(title: "Call 123-000-\(indexPath.row)", style: .default, handler: callActionHandler)
+//       
+//        let checkinAction = UIAlertAction(title: "Check In", style: .default, handler: {(action: UIAlertAction!) -> Void in
+//            
+//            let cell = tableView.cellForRow(at: indexPath)
+//            self.restaurantIsVisited[indexPath.row] = true
+//            cell?.accessoryView = UIImageView(image: UIImage(named: "heart-tick"))
+//            
+//            
+//        })
+//        
+//        let cancelCheckinAction = UIAlertAction(title: "Cancel Check In", style: .default, handler: {(action: UIAlertAction!) -> Void in
+//            
+//            let cell = tableView.cellForRow(at: indexPath)
+//            self.restaurantIsVisited[indexPath.row] = false
+//            cell?.accessoryView = .none
+//            
+//            
+//            
+//            
+//        })
+//        
+//        optionMenu.addAction(cancelAction)
+//        optionMenu.addAction(callAction)
+//        
+//        // check if restaurant is visited and change UI accordingly
+//        
+//        if restaurantIsVisited[indexPath.row] {
+//            optionMenu.addAction(cancelCheckinAction)
+//        }
+//        else {
+//            optionMenu.addAction(checkinAction)
+//        }
+//        
+//        // Display the menu
+//        present(optionMenu, animated: true, completion: nil)
+//        
+//        tableView.deselectRow(at: indexPath, animated: false)
+//        
+//    }
+    
+    
     
     override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
@@ -223,7 +229,16 @@ class RestaurantTableViewController: UITableViewController {
         let swipeConfiguration = UISwipeActionsConfiguration(actions: [deleteAction, shareAction])
         return swipeConfiguration
     }
-        
+    
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showRestaurantDetail" {
+            if let indexPath  = tableView.indexPathForSelectedRow {
+                let destinationController = segue.destination as! RestaurantDetailViewController
+                destinationController.restuarantImageName = restaurantImages[indexPath.row]
+            }
+        }
+    }
         
         
 
